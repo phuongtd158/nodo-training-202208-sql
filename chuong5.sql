@@ -67,10 +67,13 @@ WHERE DEPTNO NOT IN (
 SELECT E.EMPNO, E.ENAME, M.MGR M_NO, M.ENAME M_NAME
 FROM EMP E,
      EMP M
-WHERE E.EMPNO = M.MGR
-  AND E.SAL < M.SAL
---Như câu 9 hiển thị thêm thông tin về ông KING.
-
+WHERE E.MGR = M.EMPNO
+  AND E.SAL < M.SAL;
+--10.Như câu 9 hiển thị thêm thông tin về ông KING.
+SELECT E.ENAME AS EMP_NAME, E.SAL AS EMP_SAL, M.ENAME MGR_NAME, M.SAL MGR_SAL
+FROM EMP E,
+     EMP M
+WHERE E.MGR = M.EMPNO;
 --11. Hiển thị nghề nghiệp được tuyển dụng vào năm 1981 và không được tuyển dụng vào năm 1994.
 SELECT DISTINCT JOB
 FROM EMP
@@ -97,20 +100,48 @@ FROM EMP E,
 WHERE E.EMPNO = M.MGR
 
 --14. Tìm những nhân viên kiếm được lương cao nhất trong mỗi loại nghề nghiệp.
-SELECT JOB, MAX(SAL)
-FROM EMP
-WHERE JOB IS NOT NULL
-GROUP BY JOB
+SELECT DISTINCT ENAME
+FROM EMP A
+WHERE A.SAL = (
+    SELECT MAX(SAL)
+    FROM EMP B
+    WHERE A.JOB = B.JOB
+)
+
 
 --15. Tìm mức lương cao nhất trong mỗi phòng ban, sắp xếp theo thứ tự phòng ban.
-SELECT E.ENAME, E.JOB, E.DEPTNO, E.SAL
-FROM EMP E
-WHERE E.SAL = ANY (
-    SELECT MAX(SAL)
+SELECT DEPTNO, MAX(SAL)
+FROM EMP
+WHERE DEPTNO IS NOT NULL
+GROUP BY DEPTNO
+ORDER BY DEPTNO
+
+--16. Tìm nhân viên gia nhập vào phòng ban sớm nhất
+SELECT ENAME, HIREDATE, DEPTNO
+FROM EMP
+WHERE HIREDATE IN (
+    SELECT MIN(HIREDATE)
+    FROM EMP
+    GROUP BY DEPTNO
+);
+--17. Hiển thị những nhân viên có mức lương lớn hơn lương TB của phòng ban mà họ làm việc
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE SAL > ANY (
+    SELECT AVG(SAL)
     FROM EMP
     GROUP BY DEPTNO
 )
 
+--18. Hiển thị tên nhân viên, mã nhân viên, mã giám đốc, tên giám đốc, phòng ban làm
+--việc của giám đốc, mức lương của giám đốc.
+SELECT E.ENAME, E.EMPNO, M.MGR, M.ENAME, M.DEPTNO, M.SAL
+FROM EMP E,
+     EMP M
+WHERE E.MGR = M.EMPNO
+  AND E.SAL < M.SAL
 
-
+SELECT ENAME,
+       (SELECT DNAME FROM DEPT D WHERE E.DEPTNO = D.DEPTNO) AS DEPT_NAME
+FROM EMP E
 
