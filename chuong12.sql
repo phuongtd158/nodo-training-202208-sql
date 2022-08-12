@@ -22,7 +22,8 @@ begin
     values (total_count);
 end;
 
-SELECT * FROM MESSAGES_PHUONGTD
+SELECT *
+FROM MESSAGES_PHUONGTD
 
 -- 2. Viết đoạn chương trình ghi dữ liệu vào bảng MESSAGES với cột NUMCOL1 mang giá trị
 --là 1 nếu là row 1 được Insert, 2 nếu row 2 được Insert... . Không được Insert những
@@ -103,5 +104,22 @@ begin
     close c_mess;
 end;
 
+create procedure proc_test(
+    id in EMP.EMPNO%type
+)
+as
+begin
+    select *
+    from EMP
+    where EMPNO = id;
+end;
+
+drop procedure proc_test
+
+declare
+    id number(4) := 7654;
+begin
+    proc_test(id);
+end;
 
 -- select * from MESSAGES_PHUONGTD; select * from EMP
