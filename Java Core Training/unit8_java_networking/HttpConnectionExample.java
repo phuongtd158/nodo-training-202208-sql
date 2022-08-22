@@ -14,7 +14,7 @@ import java.nio.file.StandardOpenOption;
 
 public class HttpConnectionExample {
     public static void main(String[] args) throws IOException {
-        URL url = new URL("https://www.google.com");
+        URL url = new URL("https://phuongtd158.github.io/e-learning/#/home");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         Path path = Paths.get("C:\\Temp\\test.html");

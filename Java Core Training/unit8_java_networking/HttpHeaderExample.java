@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 
 public class HttpHeaderExample {
     public static void main(String[] args) throws IOException {
-        URL url = new URL("https://www.google.com/");
+        URL url = new URL("https://phuongtd158.github.io/e-learning/#/home");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         System.out.println("Http method " + connection.getRequestMethod());
