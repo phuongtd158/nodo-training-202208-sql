@@ -52,6 +52,11 @@
             </props>
         </property>
         <property name="packagesToScan" value="edu.hanoi.jazz.springjazz.model"/>
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:User.xml</value>
+            </list>
+        </property>
     </bean>
     <bean id="startEventHandler" class="edu.hanoi.jazz.springjazz.ContextStartEventHandler"/>
     <security:http auto-config="true">

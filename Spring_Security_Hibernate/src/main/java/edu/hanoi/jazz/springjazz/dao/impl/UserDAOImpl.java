@@ -1,7 +1,7 @@
 package edu.hanoi.jazz.springjazz.dao.impl;
 
-import edu.hanoi.jazz.springjazz.dao.GroupDAO;
-import edu.hanoi.jazz.springjazz.model.Group;
+import edu.hanoi.jazz.springjazz.dao.UserDAO;
+import edu.hanoi.jazz.springjazz.model.User;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -11,24 +11,23 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("userDAO")
+public class UserDAOImpl implements UserDAO {
 
-@Component("groupDAO")
-public class GroupDAOImpl implements GroupDAO {
-
-    private static final Logger LOGGER = Logger.getLogger(GroupDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(UserDAOImpl.class);
 
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public void insert(Group group) {
+    public void insert(User user) {
         Session session = sessionFactory.getObject().openSession();
         try {
             session.getTransaction().begin();
-            session.save(group);
+            session.save(user);
             session.flush();
             session.getTransaction().commit();
-            LOGGER.info("Save group " + group.getName() + " done !");
+            LOGGER.info("Save user " + user.getUsername() + " done !");
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
@@ -36,10 +35,10 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public List<Group> list() {
+    public List<User> list() {
         Session session = sessionFactory.getObject().openSession();
         try {
-            Query query = session.createQuery("FROM Group");
+            Query query = session.createQuery("FROM User");
             return query.list();
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,11 +50,11 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public List<Group> searchByName(String name) {
+    public List<User> searchByUserName(String username) {
         Session session = sessionFactory.getObject().openSession();
         try {
-            Query query = session.createQuery("from Group where name like :name");
-            query.setParameter("name", "%" + name + "%");
+            Query query = session.createQuery("from User where username like :username");
+            query.setParameter("username", "%" + username + "%");
             return query.list();
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,18 +66,18 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(String username) {
         Session session = sessionFactory.getObject().openSession();
         try {
             session.getTransaction().begin();
-            Group group = session.get(Group.class, id);
-            if (group == null) {
+            User user = session.get(User.class, username);
+            if (user == null) {
                 return;
             }
-            session.delete(group);
+            session.delete(user);
             session.flush();
             session.getTransaction().commit();
-            LOGGER.info("Delete group " + group.getName() + " done !");
+            LOGGER.info("Delete user " + user.getUsername() + " done !");
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
@@ -86,15 +85,15 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void update(Group group) {
+    public void update(User user) {
         Session session = sessionFactory.getObject().openSession();
-        Group groupExist = (Group) session.merge(group);
+        User userExist = (User) session.merge(user);
         try {
             session.getTransaction().begin();
-            session.save(groupExist);
+            session.save(userExist);
             session.flush();
             session.getTransaction().commit();
-            LOGGER.info("Update group " + group.getName() + " success !");
+            LOGGER.info("Update group " + userExist.getUsername() + " success !");
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
@@ -102,8 +101,8 @@ public class GroupDAOImpl implements GroupDAO {
     }
 
     @Override
-    public Group get(Integer id) {
+    public User get(String username) {
         Session session = sessionFactory.getObject().openSession();
-        return session.get(Group.class, id);
+        return session.get(User.class, username);
     }
 }

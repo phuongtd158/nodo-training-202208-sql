@@ -1,6 +1,7 @@
 package edu.hanoi.jazz.springjazz.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "hn_group",
@@ -9,10 +10,11 @@ import javax.persistence.*;
         })
 public class Group {
 
-
     private Integer id;
 
     private String name;
+
+    private List<User> users;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +34,16 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_id")
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override

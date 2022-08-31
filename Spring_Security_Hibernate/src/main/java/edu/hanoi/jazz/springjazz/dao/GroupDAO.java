@@ -9,6 +9,8 @@ public interface GroupDAO {
 
     List<Group> list();
 
+    List<Group> searchByName(String name);
+
     void delete(Integer id);
 
     void update(Group group);

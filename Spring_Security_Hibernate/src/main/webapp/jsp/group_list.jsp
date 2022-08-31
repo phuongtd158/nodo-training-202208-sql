@@ -4,24 +4,30 @@
 <tiles:insertDefinition name="template">
     <tiles:putAttribute name="body">
         <h1>Group list</h1>
-        <a href="/group/add-or-update">Delete</a>
-        <table style="width:50%" >
+        <a href="/group/add-or-update">Create</a>
+        <form action="/group/list" method="get">
+            <label>
+                <input type="text" name="q" placeholder="Name">
+            </label>
+            <button>Search</button>
+        </form>
+        <table style="width:50%">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Action</th>
-                </tr>
+            <tr>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
             </thead>
             <tbody>
-                <c:forEach items="${groups}" var="group">
-                    <tr>
-                        <td>${group.name}</td>
-                        <td>
-                            <a href="/group/delete/${group.id}">Delete</a>
-                            <a href="/group/edit/${group.id}">Edit</a>
-                        </td>
-                    </tr>
-                </c:forEach>
+            <c:forEach items="${groups}" var="group">
+                <tr>
+                    <td>${group.name}</td>
+                    <td>
+                        <a href="/group/delete/${group.id}">Delete</a>
+                        <a href="/group/edit/${group.id}">Edit</a>
+                    </td>
+                </tr>
+            </c:forEach>
             </tbody>
         </table>
     </tiles:putAttribute>

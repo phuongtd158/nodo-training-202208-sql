@@ -22,12 +22,21 @@ public class ContextStartEventHandler implements ApplicationListener<ContextStar
     @Override
     public void onApplicationEvent(ContextStartedEvent event) {
         LOGGER.info("Context start application " + dataSource);
-        String sql = "create table hn_group(\n" +
+        String createTableHnGroupSql = "create table hn_group(\n" +
                 "\tid int auto_increment primary key,\n" +
                 "    name varchar(100)\n" +
                 ")";
+        String createTableHnUserSql = "create table hn_user(\n" +
+                "\tusername varchar(100) primary key,\n" +
+                "\tpassword varchar(100) not null,\n" +
+                "    email varchar(100) not null,\n" +
+                "    age int,\n" +
+                "    group_id int,\n" +
+                "    constraint GROUP_FK foreign key(group_id) references hn_group(id)\n" +
+                ")";
         try {
-            createTable("hn_group", sql);
+            createTable("hn_group", createTableHnGroupSql);
+            createTable("hn_user", createTableHnUserSql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
