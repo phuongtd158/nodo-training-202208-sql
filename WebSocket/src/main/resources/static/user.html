@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"
+            integrity="sha512-1QvjE7BtotQjkq8PxLeF6P46gEpBRXuskzIVgjFpekzFVF4yjRgrQvTG1MTOJ3yQgvTteKAcO7DSZI92+u/yZw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"
+            integrity="sha512-tL4PIUsPy+Rks1go4kQG8M8/ItpRMvKnbBjQm4d2DQnFwgcBYRRN00QdyQnWSCwNMsoY/MfJY8nHp2CzlNdtZA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body onload="connect()">
+
+<h1>Add user</h1>
+<form action="javascript:save()" method="post">
+    <p>
+        <label for="username">Username: </label>
+        <input type="text" id="username" name="username">
+    </p>
+    <p>
+        <label for="password">Password: </label>
+        <input type="password" id="password" name="password">
+    </p>
+    <p>
+        <label for="email">Email: </label>
+        <input type="email" id="email" name="email">
+    </p>
+    <p>
+        <label for="age">Age: </label>
+        <input type="text" id="age" name="age">
+    </p>
+    <p>
+        <label for="groupId">Group ID: </label>
+        <select id="groupId" name="groupId">
+
+        </select>
+    </p>
+    <p>
+        <input type="submit" name="save" value="Save">
+    </p>
+</form>
+<p id="response">
+
+</p>
+
+<table id="table">
+    <tr>
+        <td>Username</td>
+        <td>Password</td>
+        <td>Email</td>
+        <td>Age</td>
+        <td>Group id</td>
+    </tr>
+</table>
+
+<script>
+    var stompClient = null;
+
+    connect = () => {
+        const socket = new SockJS("/user");
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, (frame) => {
+            console.log("Connected: " + frame);
+        })
+        setTimeout(() => {
+            stompClient.subscribe("/topic/chat", (message) => {
+                showMessage(JSON.parse(message.body).content);
+            })
+        }, 500)
+
+        loadGroups();
+    }
+    save = () => {
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const age = document.getElementById("age").value;
+        const groupId = document.getElementById("groupId").value;
+
+        console.log("Sending..." + username);
+        stompClient.send("/app/user", {}, JSON.stringify({
+            "username": username,
+            "email": email,
+            "password": password,
+            "age": age,
+            "groupId": groupId,
+        }));
+    }
+
+    showMessage = (text) => {
+        const response = document.getElementById("response");
+        const p = document.createElement("p");
+
+        p.appendChild(document.createTextNode(text));
+        response.appendChild(p);
+    }
+
+    loadGroups = () => {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = () => {
+            if (xmlHttp.readyState === XMLHttpRequest.DONE) {
+                const groups = JSON.parse(xmlHttp.responseText);
+                const select = document.getElementById("groupId");
+                for (const index in groups) {
+                    const group = groups[index];
+                    select.appendChild(createOptionGroup(group));
+                }
+            }
+        };
+        xmlHttp.open("GET", "/group/list", true);
+        xmlHttp.send();
+    }
+
+    createOptionGroup = (group) => {
+        const option = document.createElement("option");
+        option.appendChild(document.createTextNode(group.name));
+        const attribute = document.createAttribute("value");
+        attribute.value = group.id;
+        option.setAttributeNode(attribute);
+        return option;
+    }
+
+</script>
+</body>
+</html>
